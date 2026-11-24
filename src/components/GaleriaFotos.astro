@@ -1,0 +1,857 @@
+---
+// Galeria.astro — Una foto · Entrada: zoom + partículas blancas · Modal: zoom + partículas doradas
+---
+
+<section class="py-12 px-4 relative xl:px-40 overflow-hidden">
+    <div
+        class="absolute inset-0 bg-gradient-to-b from-[#f5f0ff] via-white to-[#f9f5ff] z-0"
+    >
+    </div>
+
+    <!-- Canvas partículas de ENTRADA (blancas/lila) — solo al cargar -->
+    <canvas
+        id="canvas-entrada"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="z-index:2;"></canvas>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+        <!-- TÍTULO -->
+        <div class="text-center mb-12" id="titulo-galeria">
+            <div class="flex items-center justify-center gap-4 md:gap-6 mb-4">
+                <div id="mariposa-izq">
+                    <img
+                        src="/gif/MariposaRoja.gif"
+                        alt="Mariposa"
+                        class="w-10 h-10 md:w-12 md:h-12 object-contain scale-x-[-1]"
+                    />
+                </div>
+                <div class="flex flex-col items-center">
+                    <h2
+                        class="font-great-vibes text-4xl md:text-5xl lg:text-6xl text-[#C3A1D9] mb-2"
+                    >
+                        Mi Momento Especial
+                    </h2>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-12 md:w-16 h-[2px] bg-gradient-to-r from-transparent to-[#BFC1C2]"
+                        >
+                        </div>
+                        <div class="w-2 h-2 rounded-full bg-[#BFC1C2]"></div>
+                        <div
+                            class="w-12 md:w-16 h-[2px] bg-gradient-to-l from-transparent to-[#BFC1C2]"
+                        >
+                        </div>
+                    </div>
+                </div>
+                <div id="mariposa-der">
+                    <img
+                        src="/gif/MariposaRoja.gif"
+                        alt="Mariposa"
+                        class="w-10 h-10 md:w-12 md:h-12 object-contain"
+                    />
+                </div>
+            </div>
+            <p class="font-charm text-lg md:text-xl text-[#BFC1C2] italic">
+                Recuerdos que llevaré siempre en mi corazón
+            </p>
+        </div>
+
+        <!-- UNA SOLA FOTO centrada -->
+        <div class="flex justify-center">
+            <div
+                id="foto-card-wrapper"
+                class="foto-card cursor-pointer"
+                data-foto="/imagenes/fot1.png"
+                data-descripcion="✨ Momentos inolvidables ✨"
+                style="opacity:0; transform:scale(0.5); filter:blur(8px);"
+            >
+                <div class="foto-inner relative overflow-hidden rounded-2xl">
+                    <img
+                        src="/imagenes/fot1.png"
+                        alt="Mi momento especial"
+                        class="foto-img block w-full h-auto"
+                    />
+                    <div class="foto-overlay absolute inset-0"></div>
+                    <div
+                        class="foto-shimmer absolute inset-0 pointer-events-none"
+                    >
+                    </div>
+                    <div
+                        class="foto-marco absolute inset-0 rounded-2xl pointer-events-none"
+                    >
+                    </div>
+                    <div
+                        class="foto-caption absolute bottom-0 left-0 right-0 p-5"
+                    >
+                        <p
+                            class="font-charm text-lg text-center text-white drop-shadow-lg"
+                        >
+                            ✨ Momentos inolvidables ✨
+                        </p>
+                    </div>
+                    <div
+                        class="foto-lupa absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center"
+                    >
+                        <span class="text-[#C3A1D9] text-lg leading-none"
+                            >🔍</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decoración inferior -->
+        <div
+            class="flex justify-center mt-10"
+            id="decoracion-inferior"
+            style="opacity:0;"
+        >
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 md:w-16 h-[1px] bg-gradient-to-r from-transparent to-[#BFC1C2]"
+                >
+                </div>
+                <div
+                    class="w-12 md:w-16 h-[1px] bg-gradient-to-l from-transparent to-[#BFC1C2]"
+                >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: zoom + partículas doradas -->
+    <div
+        id="modal-foto"
+        class="fixed inset-0 z-50 hidden items-center justify-center"
+        style="background:rgba(8,4,18,0.97); overflow-y:auto;"
+    >
+        <canvas
+            id="canvas-modal"
+            class="absolute inset-0 w-full h-full pointer-events-none"
+            style="z-index:1;"></canvas>
+
+        <button
+            id="cerrar-modal"
+            class="fixed top-4 right-4 md:top-6 md:right-6 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 group"
+            style="z-index:20; background:rgba(195,161,217,0.15); border:1px solid rgba(195,161,217,0.4);"
+        >
+            <span
+                class="text-white text-2xl leading-none group-hover:rotate-90 transition-transform duration-300"
+                >×</span
+            >
+        </button>
+
+        <div
+            class="relative flex flex-col items-center justify-center gap-5 p-4 md:p-10 w-full min-h-full"
+            style="z-index:5;"
+        >
+            <div id="foto-zoom-wrapper" style="opacity:0; position:relative;">
+                <div
+                    id="aura-exterior"
+                    class="absolute pointer-events-none"
+                    style="inset:-18px; border-radius:28px; border:1px solid rgba(255,215,80,0);"
+                >
+                </div>
+                <div
+                    class="destello-esquina"
+                    id="d-tl"
+                    style="top:-6px;left:-6px;"
+                >
+                </div>
+                <div
+                    class="destello-esquina"
+                    id="d-tr"
+                    style="top:-6px;right:-6px;"
+                >
+                </div>
+                <div
+                    class="destello-esquina"
+                    id="d-bl"
+                    style="bottom:-6px;left:-6px;"
+                >
+                </div>
+                <div
+                    class="destello-esquina"
+                    id="d-br"
+                    style="bottom:-6px;right:-6px;"
+                >
+                </div>
+                <div
+                    class="rounded-2xl p-[3px]"
+                    style="background:linear-gradient(135deg,rgba(255,215,80,.9) 0%,rgba(195,161,217,.7) 25%,rgba(255,215,80,.9) 50%,rgba(191,193,194,.6) 75%,rgba(255,215,80,.9) 100%);
+                            box-shadow:0 8px 60px rgba(255,215,80,.22),0 0 90px rgba(195,161,217,.1);"
+                >
+                    <div class="rounded-[14px] overflow-hidden bg-black">
+                        <img
+                            id="modal-imagen"
+                            src=""
+                            alt="Foto ampliada"
+                            style="display:block; max-width:min(90vw,960px); max-height:78vh; width:auto; height:auto; object-fit:contain;"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div
+                id="modal-desc-wrapper"
+                style="opacity:0; transform:translateY(12px); transition:opacity .45s,transform .45s;"
+            >
+                <p
+                    id="modal-descripcion"
+                    class="font-charm text-lg md:text-xl text-center"
+                    style="color:rgba(255,255,255,.88); text-shadow:0 0 24px rgba(195,161,217,.9);"
+                >
+                    ✨ Momentos inolvidables ✨
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (typeof window !== "undefined") {
+        document.addEventListener("DOMContentLoaded", () => {
+            // ── Estado inicial título ────────────────────────────
+            gsap.set("#titulo-galeria", { opacity: 0, y: -30 });
+            gsap.set("#mariposa-izq, #mariposa-der", {
+                opacity: 0,
+                scale: 0.5,
+            });
+
+            ScrollTrigger.create({
+                trigger: "#titulo-galeria",
+                start: "top 85%",
+                onEnter() {
+                    gsap.timeline()
+                        .to("#titulo-galeria", {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.8,
+                            ease: "power2.out",
+                        })
+                        .to(
+                            "#mariposa-izq, #mariposa-der",
+                            {
+                                opacity: 1,
+                                scale: 1,
+                                duration: 0.6,
+                                ease: "back.out(1.5)",
+                                stagger: 0.1,
+                            },
+                            "-=0.4",
+                        );
+                    gsap.to("#mariposa-izq", {
+                        y: -8,
+                        rotation: 5,
+                        duration: 2.5,
+                        ease: "sine.inOut",
+                        yoyo: true,
+                        repeat: -1,
+                        delay: 0.5,
+                    });
+                    gsap.to("#mariposa-der", {
+                        y: -8,
+                        rotation: -5,
+                        duration: 2.5,
+                        ease: "sine.inOut",
+                        yoyo: true,
+                        repeat: -1,
+                        delay: 0.7,
+                    });
+                },
+                onLeaveBack() {
+                    gsap.set("#titulo-galeria", { opacity: 0, y: -30 });
+                    gsap.set("#mariposa-izq, #mariposa-der", {
+                        opacity: 0,
+                        scale: 0.5,
+                    });
+                },
+            });
+
+            // ════════════════════════════════════════════════════
+            //  PARTÍCULAS DE ENTRADA — blancas y lila suave
+            // ════════════════════════════════════════════════════
+            const cvE = document.getElementById(
+                "canvas-entrada",
+            ) as HTMLCanvasElement;
+            const ctxE = cvE?.getContext("2d");
+            let ptsE: any[] = [],
+                rafE: number | null = null,
+                vivoE = false;
+
+            function resizeE() {
+                if (cvE) {
+                    cvE.width = cvE.offsetWidth;
+                    cvE.height = cvE.offsetHeight;
+                }
+            }
+
+            function mkPtE(cx: number, cy: number) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = Math.random() * 3.5 + 1.2;
+                const rgb =
+                    Math.random() > 0.45 ? "255,255,255" : "220,200,255";
+                return {
+                    x: cx,
+                    y: cy,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd - Math.random() * 1.5,
+                    r: Math.random() * 2.8 + 0.6,
+                    a: Math.random() * 0.8 + 0.2,
+                    decay: Math.random() * 0.012 + 0.008,
+                    star: Math.random() > 0.55,
+                    rgb,
+                    ph: Math.random() * Math.PI * 2,
+                    ps: Math.random() * 0.06 + 0.02,
+                };
+            }
+
+            function drawStarE(
+                cx: number,
+                cy: number,
+                r: number,
+                a: number,
+                rgb: string,
+            ) {
+                if (!ctxE) return;
+                ctxE.save();
+                ctxE.translate(cx, cy);
+                for (let i = 0; i < 4; i++) {
+                    const ang = (i * Math.PI) / 2;
+                    ctxE.beginPath();
+                    ctxE.moveTo(0, 0);
+                    ctxE.lineTo(Math.cos(ang) * r * 3, Math.sin(ang) * r * 3);
+                    ctxE.globalAlpha = a * 0.75;
+                    ctxE.strokeStyle = `rgba(${rgb},1)`;
+                    ctxE.lineWidth = 0.6;
+                    ctxE.stroke();
+                }
+                ctxE.globalAlpha = a;
+                ctxE.beginPath();
+                ctxE.arc(0, 0, r * 0.45, 0, Math.PI * 2);
+                ctxE.fillStyle = `rgba(${rgb},1)`;
+                ctxE.fill();
+                ctxE.restore();
+            }
+
+            function loopE() {
+                if (!ctxE || !cvE || !vivoE) return;
+                ctxE.clearRect(0, 0, cvE.width, cvE.height);
+                ptsE = ptsE.filter((p) => p.a > 0.01);
+                for (const p of ptsE) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.045; // gravedad leve
+                    p.ph += p.ps;
+                    p.a -= p.decay;
+                    const a = Math.max(
+                        0,
+                        p.a * (0.6 + 0.4 * Math.abs(Math.sin(p.ph))),
+                    );
+                    if (p.star) drawStarE(p.x, p.y, p.r, a, p.rgb);
+                    else {
+                        ctxE.globalAlpha = a;
+                        ctxE.beginPath();
+                        ctxE.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctxE.fillStyle = `rgba(${p.rgb},1)`;
+                        ctxE.fill();
+                        ctxE.globalAlpha = 1;
+                    }
+                }
+                if (ptsE.length > 0) rafE = requestAnimationFrame(loopE);
+                else {
+                    vivoE = false;
+                    ctxE.clearRect(0, 0, cvE.width, cvE.height);
+                }
+            }
+
+            function lanzarParticulas() {
+                resizeE();
+                const card = document.getElementById("foto-card-wrapper");
+                if (!card || !cvE) return;
+                const rect = card.getBoundingClientRect();
+                const secRect = cvE.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2 - secRect.left;
+                const cy = rect.top + rect.height / 2 - secRect.top;
+                // Ráfaga inicial: 200 partículas desde el centro de la foto
+                ptsE = Array.from({ length: 220 }, () => mkPtE(cx, cy));
+                vivoE = true;
+                loopE();
+            }
+
+            // ════════════════════════════════════════════════════
+            //  ZOOM DE ENTRADA al cargar la página
+            // ════════════════════════════════════════════════════
+            const card = document.getElementById("foto-card-wrapper");
+
+            function entradaZoom() {
+                if (!card) return;
+
+                // Etapa 1: aparece pequeño y borroso
+                gsap.to(card, {
+                    opacity: 0.5,
+                    scale: 0.65,
+                    filter: "blur(5px)",
+                    duration: 0.38,
+                    ease: "power2.out",
+                    onComplete() {
+                        // Etapa 2: acercamiento medio
+                        gsap.to(card, {
+                            opacity: 0.85,
+                            scale: 0.9,
+                            filter: "blur(1.5px)",
+                            duration: 0.3,
+                            ease: "power1.inOut",
+                            onComplete() {
+                                // Etapa 3: encaje final con overshoot
+                                gsap.to(card, {
+                                    opacity: 1,
+                                    scale: 1,
+                                    filter: "blur(0px)",
+                                    duration: 0.42,
+                                    ease: "back.out(1.6)",
+                                    onComplete() {
+                                        // Lanzar partículas al aterrizar
+                                        lanzarParticulas();
+                                        // Decoración inferior
+                                        gsap.to("#decoracion-inferior", {
+                                            opacity: 1,
+                                            duration: 0.6,
+                                            delay: 0.2,
+                                        });
+                                        // Pulso de marco dorado momentáneo
+                                        gsap.to(card, {
+                                            boxShadow:
+                                                "0 0 40px rgba(255,215,80,.35), 0 0 80px rgba(195,161,217,.2)",
+                                            duration: 0.5,
+                                            ease: "power2.out",
+                                            onComplete() {
+                                                gsap.to(card, {
+                                                    boxShadow: "none",
+                                                    duration: 1.2,
+                                                    ease: "power2.in",
+                                                });
+                                            },
+                                        });
+                                    },
+                                });
+                            },
+                        });
+                    },
+                });
+            }
+
+            // Disparar entrada cuando la foto entra en viewport
+            ScrollTrigger.create({
+                trigger: "#foto-card-wrapper",
+                start: "top 88%",
+                once: true, // solo una vez
+                onEnter() {
+                    entradaZoom();
+                },
+            });
+
+            // ════════════════════════════════════════════════════
+            //  PARTÍCULAS MODAL — doradas
+            // ════════════════════════════════════════════════════
+            const cvM = document.getElementById(
+                "canvas-modal",
+            ) as HTMLCanvasElement;
+            const ctxM = cvM?.getContext("2d");
+            let ptsM: any[] = [],
+                rafM: number | null = null,
+                vivoM = false;
+
+            function resizeM() {
+                if (cvM) {
+                    cvM.width = innerWidth;
+                    cvM.height = innerHeight;
+                }
+            }
+
+            function mkPtM() {
+                const d = Math.random() > 0.42;
+                return {
+                    x: Math.random() * cvM.width,
+                    y: Math.random() * cvM.height,
+                    r: Math.random() * 2.4 + 0.5,
+                    a: Math.random() * 0.6 + 0.1,
+                    sp: Math.random() * 0.5 + 0.15,
+                    dr: (Math.random() - 0.5) * 0.38,
+                    ph: Math.random() * Math.PI * 2,
+                    ps: Math.random() * 0.022 + 0.006,
+                    star: Math.random() > 0.6,
+                    rgb: d ? "255,215,80" : "195,161,217",
+                };
+            }
+
+            function drawStarM(
+                cx: number,
+                cy: number,
+                r: number,
+                a: number,
+                rgb: string,
+            ) {
+                if (!ctxM) return;
+                ctxM.save();
+                ctxM.translate(cx, cy);
+                for (let i = 0; i < 4; i++) {
+                    const ang = (i * Math.PI) / 2;
+                    ctxM.beginPath();
+                    ctxM.moveTo(0, 0);
+                    ctxM.lineTo(
+                        Math.cos(ang) * r * 3.2,
+                        Math.sin(ang) * r * 3.2,
+                    );
+                    ctxM.globalAlpha = a * 0.8;
+                    ctxM.strokeStyle = `rgba(${rgb},1)`;
+                    ctxM.lineWidth = 0.55;
+                    ctxM.stroke();
+                }
+                ctxM.globalAlpha = a;
+                ctxM.beginPath();
+                ctxM.arc(0, 0, r * 0.4, 0, Math.PI * 2);
+                ctxM.fillStyle = "rgba(255,245,200,1)";
+                ctxM.fill();
+                ctxM.restore();
+            }
+
+            function loopM() {
+                if (!ctxM || !cvM || !vivoM) return;
+                ctxM.clearRect(0, 0, cvM.width, cvM.height);
+                for (const p of ptsM) {
+                    p.ph += p.ps;
+                    p.y -= p.sp;
+                    p.x += p.dr;
+                    const a = p.a * (0.38 + 0.62 * Math.abs(Math.sin(p.ph)));
+                    if (p.star) drawStarM(p.x, p.y, p.r, a, p.rgb);
+                    else {
+                        ctxM.globalAlpha = a;
+                        ctxM.beginPath();
+                        ctxM.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctxM.fillStyle = `rgba(${p.rgb},1)`;
+                        ctxM.fill();
+                        ctxM.globalAlpha = 1;
+                    }
+                    if (p.y < -12) {
+                        p.y = cvM.height + 8;
+                        p.x = Math.random() * cvM.width;
+                    }
+                }
+                rafM = requestAnimationFrame(loopM);
+            }
+
+            function startM() {
+                resizeM();
+                ptsM = Array.from({ length: 150 }, mkPtM);
+                vivoM = true;
+                loopM();
+            }
+            function stopM() {
+                vivoM = false;
+                if (rafM) cancelAnimationFrame(rafM);
+                if (ctxM && cvM) ctxM.clearRect(0, 0, cvM.width, cvM.height);
+                ptsM = [];
+            }
+
+            // ════════════════════════════════════════════════════
+            //  MODAL
+            // ════════════════════════════════════════════════════
+            const modal = document.getElementById("modal-foto");
+            const modalImg = document.getElementById(
+                "modal-imagen",
+            ) as HTMLImageElement;
+            const modalDesc = document.getElementById("modal-descripcion");
+            const descWrap = document.getElementById("modal-desc-wrapper");
+            const zoomWrap = document.getElementById("foto-zoom-wrapper");
+            const auraEl = document.getElementById("aura-exterior");
+            const cerrarBtn = document.getElementById("cerrar-modal");
+            const DESTS = ["#d-tl", "#d-tr", "#d-bl", "#d-br"];
+            let auraRaf: number | null = null,
+                auraPhase = 0;
+
+            function auraLoop() {
+                auraPhase += 0.025;
+                const v = 0.28 + 0.18 * Math.abs(Math.sin(auraPhase));
+                if (auraEl) {
+                    auraEl.style.borderColor = `rgba(255,215,80,${v})`;
+                    auraEl.style.boxShadow = `0 0 ${30 + 20 * Math.abs(Math.sin(auraPhase))}px rgba(255,215,80,${v * 0.9}),0 0 60px rgba(195,161,217,${v * 0.5})`;
+                }
+                auraRaf = requestAnimationFrame(auraLoop);
+            }
+
+            function zoomModal() {
+                if (!zoomWrap) return;
+                gsap.fromTo(
+                    zoomWrap,
+                    { scale: 0.12, opacity: 0, filter: "blur(10px)" },
+                    {
+                        scale: 0.58,
+                        opacity: 0.55,
+                        filter: "blur(4px)",
+                        duration: 0.42,
+                        ease: "power2.out",
+                        onComplete() {
+                            gsap.to(zoomWrap, {
+                                scale: 0.87,
+                                opacity: 0.88,
+                                filter: "blur(1px)",
+                                duration: 0.32,
+                                ease: "power1.inOut",
+                                onComplete() {
+                                    gsap.to(zoomWrap, {
+                                        scale: 1,
+                                        opacity: 1,
+                                        filter: "blur(0px)",
+                                        duration: 0.38,
+                                        ease: "back.out(1.7)",
+                                        onComplete() {
+                                            auraLoop();
+                                            DESTS.forEach((s, i) => {
+                                                gsap.fromTo(
+                                                    s,
+                                                    { opacity: 0, scale: 0 },
+                                                    {
+                                                        opacity: 1,
+                                                        scale: 1,
+                                                        duration: 0.32,
+                                                        delay: i * 0.07,
+                                                        ease: "back.out(2.5)",
+                                                    },
+                                                );
+                                                gsap.to(s, {
+                                                    opacity: 0.2,
+                                                    scale: 0.65,
+                                                    duration: 1.5,
+                                                    delay: 0.38 + i * 0.07,
+                                                    ease: "sine.inOut",
+                                                    yoyo: true,
+                                                    repeat: -1,
+                                                });
+                                            });
+                                            if (descWrap) {
+                                                descWrap.style.opacity = "1";
+                                                descWrap.style.transform =
+                                                    "translateY(0)";
+                                            }
+                                        },
+                                    });
+                                },
+                            });
+                        },
+                    },
+                );
+            }
+
+            function abrirModal(src: string, desc: string) {
+                if (!modal || !modalImg) return;
+                modalImg.src = src;
+                if (modalDesc) modalDesc.textContent = desc;
+                gsap.set(zoomWrap, {
+                    scale: 0.12,
+                    opacity: 0,
+                    filter: "blur(10px)",
+                });
+                if (descWrap) {
+                    descWrap.style.opacity = "0";
+                    descWrap.style.transform = "translateY(12px)";
+                }
+                if (auraEl) {
+                    auraEl.style.borderColor = "rgba(255,215,80,0)";
+                    auraEl.style.boxShadow = "none";
+                }
+                DESTS.forEach((s) => gsap.set(s, { opacity: 0, scale: 0 }));
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+                gsap.fromTo(
+                    modal,
+                    { opacity: 0 },
+                    { opacity: 1, duration: 0.35 },
+                );
+                startM();
+                setTimeout(zoomModal, 150);
+            }
+
+            function cerrarModal() {
+                if (!modal) return;
+                if (auraRaf) cancelAnimationFrame(auraRaf);
+                DESTS.forEach((s) => gsap.killTweensOf(s));
+                gsap.to(zoomWrap, {
+                    scale: 0.55,
+                    opacity: 0,
+                    filter: "blur(8px)",
+                    duration: 0.28,
+                    ease: "power2.in",
+                });
+                gsap.to(modal, {
+                    opacity: 0,
+                    duration: 0.35,
+                    delay: 0.1,
+                    onComplete() {
+                        modal.classList.add("hidden");
+                        modal.classList.remove("flex");
+                        stopM();
+                        if (modalImg) modalImg.src = "";
+                    },
+                });
+            }
+
+            document.querySelectorAll(".foto-card").forEach((c) => {
+                c.addEventListener("click", () =>
+                    abrirModal(
+                        c.getAttribute("data-foto") || "",
+                        c.getAttribute("data-descripcion") ||
+                            "✨ Momentos inolvidables ✨",
+                    ),
+                );
+            });
+
+            cerrarBtn?.addEventListener("click", cerrarModal);
+            document.addEventListener("keydown", (e) => {
+                if (
+                    e.key === "Escape" &&
+                    modal &&
+                    !modal.classList.contains("hidden")
+                )
+                    cerrarModal();
+            });
+            modal?.addEventListener("click", (e) => {
+                if (e.target === modal) cerrarModal();
+            });
+            window.addEventListener("resize", () => {
+                resizeE();
+                resizeM();
+            });
+        });
+    }
+</script>
+
+<style>
+    .foto-card {
+        width: 100%;
+        max-width: 520px;
+        transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+        will-change: transform, opacity, filter;
+    }
+    .foto-card:hover {
+        transform: translateY(-8px) scale(1.012);
+    }
+
+    .foto-img {
+        transition: transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .foto-card:hover .foto-img {
+        transform: scale(1.06);
+    }
+
+    .foto-overlay {
+        background: linear-gradient(
+            to top,
+            rgba(195, 161, 217, 0.72) 0%,
+            rgba(195, 161, 217, 0.14) 42%,
+            transparent 100%
+        );
+        opacity: 0;
+        transition: opacity 0.42s ease;
+    }
+    .foto-card:hover .foto-overlay {
+        opacity: 1;
+    }
+
+    .foto-shimmer {
+        background: linear-gradient(
+            118deg,
+            transparent 28%,
+            rgba(255, 215, 80, 0.18) 50%,
+            transparent 72%
+        );
+        background-size: 220% 220%;
+        background-position: -120% 0;
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+    .foto-card:hover .foto-shimmer {
+        opacity: 1;
+        animation: shimmer-sweep 0.85s ease forwards;
+    }
+    @keyframes shimmer-sweep {
+        from {
+            background-position: -120% 0;
+        }
+        to {
+            background-position: 220% 0;
+        }
+    }
+
+    .foto-marco {
+        border: 2px solid rgba(255, 215, 80, 0);
+        box-shadow: inset 0 0 0px rgba(195, 161, 217, 0);
+        transition:
+            border-color 0.38s ease,
+            box-shadow 0.38s ease;
+    }
+    .foto-card:hover .foto-marco {
+        border-color: rgba(255, 215, 80, 0.52);
+        box-shadow: inset 0 0 22px rgba(195, 161, 217, 0.18);
+    }
+
+    .foto-caption {
+        background: linear-gradient(
+            to top,
+            rgba(8, 4, 18, 0.76) 0%,
+            transparent 100%
+        );
+        transform: translateY(100%);
+        transition: transform 0.42s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .foto-card:hover .foto-caption {
+        transform: translateY(0);
+    }
+
+    .foto-lupa {
+        opacity: 0;
+        transform: scale(0.7);
+        transition:
+            opacity 0.28s,
+            transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 0 2px 14px rgba(195, 161, 217, 0.4);
+    }
+    .foto-card:hover .foto-lupa {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .foto-inner {
+        box-shadow: 0 4px 24px rgba(195, 161, 217, 0.12);
+        transition: box-shadow 0.42s ease;
+    }
+    .foto-card:hover .foto-inner {
+        box-shadow:
+            0 20px 55px rgba(195, 161, 217, 0.3),
+            0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .destello-esquina {
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        pointer-events: none;
+        border-radius: 50%;
+        background: radial-gradient(
+            circle,
+            rgba(255, 215, 80, 1) 0%,
+            transparent 70%
+        );
+        box-shadow: 0 0 8px 3px rgba(255, 215, 80, 0.65);
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    #modal-foto {
+        overflow-y: auto;
+    }
+</style>

@@ -1,0 +1,288 @@
+<section class="relative text-black w-full overflow-x-hidden">
+    <div
+        class="relative w-full overflow-hidden"
+        id="flores-arriba"
+        style="opacity: 1 !important;"
+    >
+        <img
+            src="/imagenes/FloresArriba.webp"
+            alt="Flores decorativas"
+            class="w-full h-auto object-cover object-center block"
+            style="opacity: 1 !important;"
+        />
+
+        <div
+            class="absolute left-1/2 transform -translate-x-1/2 top-[100px] sm:top-16 md:top-12 lg:top-8 xl:top-4 z-50"
+            id="corona"
+        >
+            <img
+                src="/imagenes/Corona.webp"
+                alt="Corona de quinceañera"
+                class="w-24 h-auto sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 object-contain mx-auto"
+            />
+        </div>
+    </div>
+
+    <div class="relative w-full sm:pt-40 md:pt-48 overflow-hidden px-4">
+        <div class="flex justify-center w-full">
+            <div class="text-center z-10 max-w-4xl w-full">
+                <div
+                    class="relative text-center z-30 mb-8 w-full"
+                    id="titulo-container"
+                >
+                    <h1
+                        class="font-crimson text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-[#C9A24D] font-bold tracking-wider"
+                        id="titulo"
+                    >
+                        MIS XV AÑOS
+                    </h1>
+                </div>
+
+                <div
+                    class="flex flex-col items-center justify-center gap-2 mb-8 w-full"
+                    id="nombre-container"
+                >
+                    <!-- Nombre con velas a los lados -->
+                    <div
+                        class="flex items-center justify-between w-full max-w-3xl mx-auto px-4"
+                    >
+                        <div id="vela-izq" class="flex-shrink-0">
+                            <img
+                                src="/imagenes/velas.png"
+                                alt="Vela izquierda"
+                                class="w-12 h-auto sm:w-14 md:w-16 lg:w-20 object-contain"
+                            />
+                        </div>
+
+                        <h2
+                            class="font-great-vibes text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-[#7B5BA6] tracking-wide whitespace-nowrap"
+                            id="nombre-typewriter"
+                        >
+                        </h2>
+
+                        <div id="vela-der" class="flex-shrink-0">
+                            <img
+                                src="/imagenes/velas.png"
+                                alt="Vela derecha"
+                                class="w-12 h-auto sm:w-14 md:w-16 lg:w-20 object-contain scale-x-[-1]"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Apellidos abajo -->
+                    <h3
+                        class="font-great-vibes text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-[#7B5BA6] tracking-wide mt-2"
+                        id="apellidos-typewriter"
+                    >
+                    </h3>
+                </div>
+
+                <div
+                    class="relative w-full overflow-visible"
+                    id="foto-container"
+                >
+                    <div
+                        id="flores-foto-izq"
+                        class="absolute -left-4 sm:left-0 top-32 sm:top-24 md:top-20 lg:top-16 flex-shrink-0 z-30"
+                    >
+                        <img
+                            src="/imagenes/FlorLateral.webp"
+                            alt="Flores izquierda"
+                            class="w-10 h-auto sm:w-24 md:w-32 lg:w-40 object-contain"
+                        />
+                    </div>
+
+                    <div
+                        id="flores-foto-der"
+                        class="absolute -right-4 sm:right-0 top-32 sm:top-24 md:top-20 lg:top-16 flex-shrink-0 z-30"
+                    >
+                        <img
+                            src="/imagenes/FlorLateral.webp"
+                            alt="Flores derecha"
+                            class="w-10 h-auto sm:w-24 md:w-32 lg:w-40 object-contain scale-x-[-1]"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import { gsap } from "gsap";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("Iniciando animaciones...");
+
+        // FLORES ARRIBA - Sin animación
+        gsap.set("#flores-arriba", { clearProps: "all" });
+
+        // CORONA - Zoom in
+        gsap.fromTo(
+            "#corona",
+            { opacity: 0, scale: 0.5 },
+            {
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+                ease: "back.out(1.2)",
+                delay: 0.3,
+            },
+        );
+
+        // TÍTULO - Fade in de arriba
+        gsap.fromTo(
+            "#titulo",
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1, ease: "power2.out", delay: 0.5 },
+        );
+
+        // VELA IZQUIERDA - Entrada desde la izquierda (SIN animación continua)
+        gsap.fromTo(
+            "#vela-izq",
+            { opacity: 0, x: -50, scale: 0.8 },
+            {
+                opacity: 1,
+                x: 0,
+                scale: 1,
+                duration: 1.2,
+                ease: "power2.out",
+                delay: 0.8,
+            },
+        );
+
+        // VELA DERECHA - Entrada desde la derecha (SIN animación continua)
+        gsap.fromTo(
+            "#vela-der",
+            { opacity: 0, x: 50, scale: 0.8 },
+            {
+                opacity: 1,
+                x: 0,
+                scale: 1,
+                duration: 1.2,
+                ease: "power2.out",
+                delay: 0.8,
+            },
+        );
+
+        // FLORES IZQUIERDA - Entrada
+        gsap.fromTo(
+            "#flores-foto-izq",
+            { opacity: 0, x: -150 },
+            { opacity: 1, x: 0, duration: 1.5, ease: "power2.out", delay: 0.7 },
+        );
+
+        // FLORES DERECHA - Entrada
+        gsap.fromTo(
+            "#flores-foto-der",
+            { opacity: 0, x: 150 },
+            { opacity: 1, x: 0, duration: 1.5, ease: "power2.out", delay: 0.7 },
+        );
+
+        // NOMBRE - Efecto cascada letra por letra
+        function nombreCascadaElegante() {
+            const nombre = "Anahy";
+            const contenedorNombre =
+                document.getElementById("nombre-typewriter");
+            if (!contenedorNombre) return;
+
+            contenedorNombre.innerHTML = nombre
+                .split("")
+                .map(
+                    (letra, index) =>
+                        `<span class="letra-cascada" style="
+                            --i: ${index};
+                            opacity: 0; 
+                            display: inline-block; 
+                            transform: translateY(30px) scale(0.8);
+                            filter: blur(2px);
+                        ">${letra}</span>`,
+                )
+                .join("");
+
+            gsap.to("#nombre-typewriter .letra-cascada", {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.8,
+                ease: "back.out(1.6)",
+                stagger: { each: 0.12, from: "start" },
+                delay: 1,
+            });
+        }
+
+        // APELLIDOS - Efecto cascada letra por letra
+        function apellidosCascadaElegante() {
+            const apellidos = "Acosta Cortez";
+            const contenedorApellidos = document.getElementById(
+                "apellidos-typewriter",
+            );
+            if (!contenedorApellidos) return;
+
+            contenedorApellidos.innerHTML = apellidos
+                .split("")
+                .map(
+                    (letra, index) =>
+                        `<span class="letra-cascada-apellido" style="
+                            --i: ${index};
+                            opacity: 0; 
+                            display: inline-block; 
+                            transform: translateY(30px) scale(0.8);
+                            filter: blur(2px);
+                        ">${letra === " " ? "&nbsp;" : letra}</span>`,
+                )
+                .join("");
+
+            gsap.to("#apellidos-typewriter .letra-cascada-apellido", {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 0.8,
+                ease: "back.out(1.6)",
+                stagger: { each: 0.12, from: "start" },
+                delay: 2,
+            });
+        }
+
+        // IMAGEN PRINCIPAL - Fade in
+        gsap.fromTo(
+            "#foto-container",
+            { opacity: 0, scale: 0.8, y: 30 },
+            {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power2.out",
+                delay: 0.5,
+            },
+        );
+
+        nombreCascadaElegante();
+        apellidosCascadaElegante();
+        console.log("Animaciones listas!");
+    });
+</script>
+
+<style>
+    /* Forzar opacidad completa en flores superiores */
+    #flores-arriba,
+    #flores-arriba img {
+        opacity: 1 !important;
+    }
+
+    .letra-cascada,
+    .letra-cascada-apellido {
+        transition: all 0.3s ease;
+        will-change: transform, opacity, filter;
+        position: relative;
+    }
+
+    .letra-cascada:hover,
+    .letra-cascada-apellido:hover {
+        transform: translateY(-3px) scale(1.05) !important;
+        text-shadow: 0 0 12px rgba(123, 91, 166, 0.5) !important;
+    }
+</style>
